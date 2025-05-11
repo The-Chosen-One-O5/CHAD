@@ -3,559 +3,412 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Focused PDF Study Environment - Enhanced</title>
-    
-    <!-- PDF.js CSS (using CDN) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf_viewer.min.css">
-
+    <title>Interactive 4D Polytopes</title>
     <style>
-        :root {
-            --primary-bg: #1e1e1e;
-            --secondary-bg: #2a2a2a;
-            --tertiary-bg: #333333;
-            --primary-text: #e0e0e0;
-            --secondary-text: #b0b0b0;
-            --accent-color: #00acc1;
-            --accent-hover: #008a9a;
-            --danger-color: #c0392b;
-        }
-
-        html, body {
-            height: 100%;
+        body {
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--primary-bg);
-            color: var(--primary-text);
+            padding: 0;
+            background-color: #111;
+            color: #eee;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
         }
-
-        .container {
-            background-color: var(--secondary-bg);
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.6);
-            margin: 50px auto;
-            width: 90%;
-            max-width: 700px;
-            text-align: center;
-        }
-
         h1 {
-            color: var(--accent-color);
-            margin-bottom: 20px;
-        }
-        p {
-            color: var(--secondary-text);
-            line-height: 1.6;
-        }
-
-        #pdf-upload-area {
-            border: 2px dashed var(--tertiary-bg);
-            padding: 30px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            cursor: pointer;
-            transition: border-color 0.3s;
-        }
-        #pdf-upload-area:hover {
-            border-color: var(--accent-color);
-        }
-        #pdf-file-input {
-            display: none;
-        }
-        #selected-files-list {
-            list-style: none;
-            padding: 0;
-            max-height: 200px;
-            overflow-y: auto;
-            text-align: left;
-            margin-bottom: 20px;
-            background-color: var(--primary-bg);
-            border-radius: 4px;
-            padding: 10px;
-        }
-        #selected-files-list li {
-            background-color: var(--tertiary-bg);
-            padding: 10px;
+            color: #0f0;
+            font-size: 1.4em; /* Slightly smaller for more room */
             margin-bottom: 8px;
-            border-radius: 4px;
-            font-size: 0.9em;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        #selected-files-list button {
-            background-color: var(--danger-color);
-            font-size: 0.8em;
-            padding: 4px 8px;
-        }
-
-        button {
-            padding: 12px 20px;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 5px;
-            transition: background-color 0.2s;
-        }
-        button:hover:not(:disabled) {
-            background-color: var(--accent-hover);
-        }
-        button:disabled {
-            background-color: #555;
-            color: #888;
-            cursor: not-allowed;
-        }
-
-        #start-session-btn {
-            display: block;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        #fullscreen-view {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #121212; /* Even darker for deep focus */
-            z-index: 1000;
-            flex-direction: column;
-        }
-
-        #pdf-controls-bar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 8px;
-            background-color: rgba(0,0,0,0.7);
-            width: 100%;
-            box-sizing: border-box;
-            height: 50px;
-            flex-shrink: 0;
-        }
-        #pdf-controls-bar button {
-            background-color: #444;
-            margin: 0 5px;
-            padding: 8px 12px;
-            font-size: 0.9em;
-        }
-         #pdf-controls-bar input[type="number"] {
-            width: 60px;
-            margin: 0 5px;
-            padding: 7px;
-            background-color: var(--secondary-bg);
-            color: var(--primary-text);
-            border: 1px solid var(--tertiary-bg);
-            border-radius: 3px;
             text-align: center;
-         }
-
-        #pdf-viewer-wrapper { /* New wrapper */
-            flex-grow: 1; /* Takes remaining space */
-            width: 100%;
-            overflow: hidden; /* Important: PDF.js viewer handles its own scroll */
-            position: relative; /* For PDF.js viewer positioning */
         }
-        
-        #viewerContainer { /* PDF.js default container ID */
-            position: absolute;
-            overflow: auto; /* PDF.js handles this */
-            width: 100%;
-            height: 100%;
-        }
-
-        #viewer { /* PDF.js default viewer ID */
-             /* PDF.js will style this */
-        }
-
-        #navigation-controls {
+        #controls {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            padding: 10px 0;
-            background-color: rgba(0,0,0,0.9);
-            width: 100%;
-            box-sizing: border-box;
-            height: 60px;
-            flex-shrink: 0;
+            gap: 8px; /* Reduced gap */
+            margin-bottom: 10px; /* Reduced margin */
+            padding: 8px;
+            background-color: #222;
+            border-radius: 5px;
+            border: 1px solid #333;
+            width: auto;
+            max-width: 95%; /* Max width for controls */
         }
-        #navigation-controls button {
-            background-color: var(--tertiary-bg);
-            min-width: 110px;
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: nowrap;
         }
-        #navigation-controls span {
-            color: var(--primary-text);
-            margin: 0 15px;
-            font-size: 0.9em;
+        .control-group label {
+            color: #ccc;
+            font-size: 0.85em; /* Slightly smaller labels */
+            min-width: 160px; /* Adjusted min-width */
+            text-align: right;
         }
-        .hidden { display: none !important; }
+        .control-group input[type="range"] {
+            width: 130px; /* Slightly smaller sliders */
+            cursor: pointer;
+        }
+        .control-group select {
+            background-color: #333;
+            color: #eee;
+            border: 1px solid #555;
+            padding: 3px;
+            font-size: 0.85em;
+            border-radius: 3px;
+            width: 130px; /* Match slider width */
+        }
+        canvas {
+            border: 1px solid #333;
+            background-color: #000;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            cursor: grab;
+        }
+        canvas:active {
+            cursor: grabbing;
+        }
+        #info {
+            margin-top: 10px;
+            font-size: 0.8em;
+            color: #aaa;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.1em; }
+            .control-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 3px;
+                width: 100%; /* Make groups take full width of controls div */
+            }
+            .control-group label {
+                text-align: left;
+                min-width: auto;
+            }
+            .control-group input[type="range"], .control-group select {
+                width: 100%; /* Full width sliders/selects on small screens */
+            }
+            #controls { max-width: 90%; }
+        }
     </style>
 </head>
 <body>
+    <h1>Interactive 4D Polytopes</h1>
 
-    <div id="setup-view" class="container">
-        <h1>Deep Focus PDF Study</h1>
-        <p>Select PDF files. Once in the session, press Esc multiple times if you truly need to exit.</p>
-        
-        <div id="pdf-upload-area">
-            Click or Drag & Drop PDF(s) Here
+    <div id="controls">
+        <div class="control-group">
+            <label for="shapeSelector">Select Shape:</label>
+            <select id="shapeSelector">
+                <option value="tesseract" selected>Tesseract (8-cell)</option>
+                <option value="5cell">5-Cell (Pentachoron)</option>
+                <option value="16cell">16-Cell (Hexadecachoron)</option>
+            </select>
         </div>
-        <input type="file" id="pdf-file-input" accept=".pdf" multiple>
-        
-        <ul id="selected-files-list"></ul>
-        
-        <button id="start-session-btn" type="button" disabled>Start Focused Session</button>
-    </div>
-
-    <div id="fullscreen-view">
-        <div id="pdf-controls-bar">
-            <button id="zoom-out-btn">-</button>
-            <button id="zoom-in-btn">+</button>
-            <input type="number" id="page-num-input" min="1" title="Page Number">
-            <span id="page-count-span">/ ?</span>
-            <button id="prev-page-btn"><</button>
-            <button id="next-page-btn">></button>
+        <div class="control-group">
+            <label for="xySpeed">XY Plane Speed:</label>
+            <input type="range" id="xySpeed" min="0" max="100" value="15">
         </div>
-        <div id="pdf-viewer-wrapper">
-            <div id="viewerContainer">
-                <div id="viewer" class="pdfViewer"></div>
-            </div>
+        <div class="control-group">
+            <label for="zwSpeed">ZW Plane Speed (Inside-Out):</label>
+            <input type="range" id="zwSpeed" min="0" max="100" value="25">
         </div>
-        <div id="navigation-controls">
-            <button id="prev-pdf-btn">« Prev PDF</button>
-            <span id="pdf-indicator">PDF 1 / 1</span>
-            <button id="next-pdf-btn">Next PDF »</button>
+        <div class="control-group">
+            <label for="ywSpeed">YW Plane Speed:</label>
+            <input type="range" id="ywSpeed" min="0" max="100" value="10">
         </div>
     </div>
 
-    <!-- PDF.js Core and Viewer (using CDN for this example) -->
-    <!-- Make sure version numbers match for all pdf.js files -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf_viewer.min.js"></script>
+    <canvas id="polytopeCanvas"></canvas>
+    <div id="info">
+        Drag to pan, Wheel to zoom. Adjust sliders for rotation.<br>
+        Vertex labels depend on the selected polytope.
+    </div>
 
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        const canvas = document.getElementById('polytopeCanvas');
+        const ctx = canvas.getContext('2d');
 
-        const pdfFileInput = document.getElementById('pdf-file-input');
-        const pdfUploadArea = document.getElementById('pdf-upload-area');
-        const selectedFilesList = document.getElementById('selected-files-list');
-        const startSessionBtn = document.getElementById('start-session-btn');
-        const setupView = document.getElementById('setup-view');
-        
-        const fullscreenView = document.getElementById('fullscreen-view');
-        const viewerContainer = document.getElementById('viewerContainer'); // PDF.js uses this
-        // const viewerDiv = document.getElementById('viewer'); // PDF.js also uses this
-        
-        const prevPdfBtn = document.getElementById('prev-pdf-btn');
-        const nextPdfBtn = document.getElementById('next-pdf-btn');
-        const pdfIndicator = document.getElementById('pdf-indicator');
+        let canvasSize = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.55); // Adjusted for more controls
+        canvas.width = canvasSize;
+        canvas.height = canvasSize;
 
-        // PDF Controls
-        const zoomInBtn = document.getElementById('zoom-in-btn');
-        const zoomOutBtn = document.getElementById('zoom-out-btn');
-        const prevPageBtn = document.getElementById('prev-page-btn');
-        const nextPageBtn = document.getElementById('next-page-btn');
-        const pageNumInput = document.getElementById('page-num-input');
-        const pageCountSpan = document.getElementById('page-count-span');
+        // --- Shape Data & Selection ---
+        let vertices4D = [];
+        let edges = [];
+        // currentShapeType is not strictly needed as label is in vertex, but can be useful
+        // let currentShapeType = 'tesseract'; 
 
-        let selectedPdfFiles = [];
-        let currentPdfIndex = 0;
-        let pdfLinkService = null;
-        let pdfViewer = null; 
-        let currentPdfDocument = null; // To hold the current PDFDocumentProxy from pdfjsLib
-
-        let intentionallyExiting = false;
-        let exitAttempts = 0;
-        const MAX_EXIT_ATTEMPTS = 4; // Increased reconsider prompts
-
-        // --- File Selection ---
-        pdfUploadArea.addEventListener('click', () => pdfFileInput.click());
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            pdfUploadArea.addEventListener(eventName, preventDefaults, false);
-        });
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        pdfUploadArea.addEventListener('dragenter', () => pdfUploadArea.classList.add('highlight'));
-        pdfUploadArea.addEventListener('dragover', () => pdfUploadArea.classList.add('highlight'));
-        pdfUploadArea.addEventListener('dragleave', () => pdfUploadArea.classList.remove('highlight'));
-        pdfUploadArea.addEventListener('drop', handleDrop, false);
-
-        function handleDrop(e) {
-            pdfUploadArea.classList.remove('highlight');
-            handleFiles(e.dataTransfer.files);
-        }
-        pdfFileInput.addEventListener('change', (event) => handleFiles(event.target.files));
-
-        function handleFiles(files) {
-            const newFiles = Array.from(files).filter(file => file.type === 'application/pdf');
-            newFiles.forEach(file => {
-                if (!selectedPdfFiles.find(f => f.name === file.name)) {
-                    selectedPdfFiles.push(file);
+        function getTesseractGeometry() {
+            const verts = [];
+            for (let i = 0; i < 16; i++) {
+                verts.push({
+                    x: (i & 8) ? 1 : -1, y: (i & 4) ? 1 : -1,
+                    z: (i & 2) ? 1 : -1, w: (i & 1) ? 1 : -1,
+                    label: i.toString(2).padStart(4, '0')
+                });
+            }
+            const edgs = [];
+            for (let i = 0; i < 16; i++) {
+                for (let j = i + 1; j < 16; j++) {
+                    let diffCount = 0;
+                    if (verts[i].x !== verts[j].x) diffCount++;
+                    if (verts[i].y !== verts[j].y) diffCount++;
+                    if (verts[i].z !== verts[j].z) diffCount++;
+                    if (verts[i].w !== verts[j].w) diffCount++;
+                    if (diffCount === 1) edgs.push([i, j]);
                 }
-            });
-            renderSelectedFiles();
-            startSessionBtn.disabled = selectedPdfFiles.length === 0;
+            }
+            return { vertices: verts, edges: edgs, type: 'tesseract' };
         }
-        function renderSelectedFiles() {
-            selectedFilesList.innerHTML = '';
-            selectedPdfFiles.forEach((file, index) => {
-                const li = document.createElement('li');
-                li.textContent = file.name;
-                const removeBtn = document.createElement('button');
-                removeBtn.textContent = 'Remove';
-                removeBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    selectedPdfFiles.splice(index, 1);
-                    renderSelectedFiles();
-                    startSessionBtn.disabled = selectedPdfFiles.length === 0;
-                    if (selectedPdfFiles.length === 0 && fullscreenView.style.display === 'flex') {
-                        // If all PDFs removed while in session, exit
-                        exitFS(true);
-                    } else if (currentPdfIndex >= selectedPdfFiles.length && selectedPdfFiles.length > 0) {
-                        currentPdfIndex = selectedPdfFiles.length - 1; // Adjust index
-                        loadPdf(selectedPdfFiles[currentPdfIndex]);
-                        updatePdfIndicator();
-                    } else if (selectedPdfFiles.length > 0) {
-                        // Potentially update display if current PDF was removed
-                        loadPdf(selectedPdfFiles[currentPdfIndex]);
-                         updatePdfIndicator();
+
+        function get5CellGeometry() {
+            const s = 0.5; // factor for the 5th point to keep coords in range
+            const rawVerts = [
+                {x:1,y:0,z:0,w:0}, {x:0,y:1,z:0,w:0}, {x:0,y:0,z:1,w:0}, {x:0,y:0,z:0,w:1},
+                {x:-s,y:-s,z:-s,w:-s}
+            ];
+            // Center the vertices
+            const centroid = {x: (1-s)/5, y: (1-s)/5, z: (1-s)/5, w: (1-s)/5 };
+            const verts = rawVerts.map((v, index) => ({
+                x: v.x - centroid.x, y: v.y - centroid.y, 
+                z: v.z - centroid.z, w: v.w - centroid.w,
+                label: `V${index}`
+            }));
+            // Scale slightly to maximize use of [-1,1] space if needed, e.g. * 1 / (max_coord_after_centering)
+            // For s=0.5, max coord is 1-0.1=0.9. This is fine.
+
+            const edgs = []; // 5-cell is a K5 graph (all vertices connected to each other)
+            for (let i = 0; i < verts.length; i++) {
+                for (let j = i + 1; j < verts.length; j++) {
+                    edgs.push([i, j]);
+                }
+            }
+            return { vertices: verts, edges: edgs, type: '5cell' };
+        }
+
+        function get16CellGeometry() {
+            const S = 1.0; // Vertices are (±1,0,0,0) and permutations
+            const rawVerts = [
+                {x:S,y:0,z:0,w:0}, {x:-S,y:0,z:0,w:0}, {x:0,y:S,z:0,w:0}, {x:0,y:-S,z:0,w:0},
+                {x:0,y:0,z:S,w:0}, {x:0,y:0,z:-S,w:0}, {x:0,y:0,z:0,w:S}, {x:0,y:0,z:0,w:-S}
+            ];
+            const verts = rawVerts.map((v, index) => ({ ...v, label: `V${index}` }));
+
+            const edgs = [];
+            // Edges connect vertices whose dot product is 0 (i.e., they are orthogonal, not antipodal)
+            for (let i = 0; i < verts.length; i++) {
+                for (let j = i + 1; j < verts.length; j++) {
+                    const vi = verts[i]; const vj = verts[j];
+                    const dotProduct = vi.x*vj.x + vi.y*vj.y + vi.z*vj.z + vi.w*vj.w;
+                    if (Math.abs(dotProduct) < 1e-6) { // Check if dot product is effectively zero
+                        edgs.push([i, j]);
                     }
-                };
-                li.appendChild(removeBtn);
-                selectedFilesList.appendChild(li);
-            });
-        }
-
-        // --- PDF.js Setup ---
-        function initializePdfViewer() {
-            pdfLinkService = new pdfjsViewer.PDFLinkService();
-            
-            pdfViewer = new pdfjsViewer.PDFViewer({
-                container: viewerContainer,
-                linkService: pdfLinkService,
-                eventBus: new pdfjsViewer.EventBus(), // Each viewer needs its own event bus
-                // textLayerMode: 2, // Enable text layer for selection/search
-                // removePageBorders: true,
-            });
-            pdfLinkService.setViewer(pdfViewer);
-
-            // Listen to page changes from PDF.js
-            pdfViewer.eventBus.on('pagechanging', (evt) => {
-                if (evt.pageNumber) {
-                    pageNumInput.value = evt.pageNumber;
                 }
-            });
-            pdfViewer.eventBus.on('scalechanging', (evt) => {
-                // Could update a zoom percentage display here
-            });
+            }
+            return { vertices: verts, edges: edgs, type: '16cell' };
         }
 
+        function loadShape(shapeName) {
+            let geometry;
+            if (shapeName === 'tesseract') geometry = getTesseractGeometry();
+            else if (shapeName === '5cell') geometry = get5CellGeometry();
+            else if (shapeName === '16cell') geometry = get16CellGeometry();
+            
+            vertices4D = geometry.vertices;
+            edges = geometry.edges;
+            // currentShapeType = geometry.type;
 
-        async function loadPdf(fileObject) {
-            if (!fileObject) {
-                if (pdfViewer) pdfViewer.setDocument(null); // Clear viewer
-                console.warn("No PDF file object provided to loadPdf.");
+            // Reset view for new shape
+            zoomLevel = 1.0;
+            offsetX = 0;
+            offsetY = 0;
+            angleXY = 0; angleZW = 0; angleYW = 0;
+        }
+        
+        document.getElementById('shapeSelector').addEventListener('change', function() {
+            loadShape(this.value);
+        });
+
+
+        // --- Speed Control Elements ---
+        const xySpeedSlider = document.getElementById('xySpeed');
+        const zwSpeedSlider = document.getElementById('zwSpeed');
+        const ywSpeedSlider = document.getElementById('ywSpeed');
+
+        const ROTATION_SCALER = 5000;
+        let xyRotationRate = parseFloat(xySpeedSlider.value) / ROTATION_SCALER;
+        let zwRotationRate = parseFloat(zwSpeedSlider.value) / ROTATION_SCALER;
+        let ywRotationRate = parseFloat(ywSpeedSlider.value) / ROTATION_SCALER;
+
+        function updateRotationRate(sliderValue, rateSetter) {
+            rateSetter(parseFloat(sliderValue) / ROTATION_SCALER);
+        }
+
+        xySpeedSlider.oninput = function() { updateRotationRate(this.value, rate => xyRotationRate = rate); };
+        zwSpeedSlider.oninput = function() { updateRotationRate(this.value, rate => zwRotationRate = rate); };
+        ywSpeedSlider.oninput = function() { updateRotationRate(this.value, rate => ywRotationRate = rate); };
+
+        // --- Zoom and Pan Variables ---
+        let zoomLevel = 1.0;
+        let offsetX = 0, offsetY = 0;
+        let isDragging = false;
+        let lastMouseX = 0, lastMouseY = 0;
+
+        let angleXY = 0, angleZW = 0, angleYW = 0;
+        let currentBaseScale = canvasSize / 8; 
+        const PROJECTION_DISTANCE_W = 2.5;
+        const PROJECTION_DISTANCE_Z = 5;
+
+        function rotate4D(point, angXY, angZW, angYW) {
+            let x = point.x, y = point.y, z = point.z, w = point.w;
+            let cosAngXY = Math.cos(angXY), sinAngXY = Math.sin(angXY);
+            let cosAngZW = Math.cos(angZW), sinAngZW = Math.sin(angZW);
+            let cosAngYW = Math.cos(angYW), sinAngYW = Math.sin(angYW);
+
+            let tempX = x * cosAngXY - y * sinAngXY;
+            let tempY = x * sinAngXY + y * cosAngXY;
+            x = tempX; y = tempY;
+
+            let tempZ = z * cosAngZW - w * sinAngZW;
+            let tempW = z * sinAngZW + w * cosAngZW;
+            z = tempZ; w = tempW;
+            
+            tempY = y * cosAngYW - w * sinAngYW;
+            tempW = y * sinAngYW + w * cosAngYW;
+            y = tempY; w = tempW;
+            return { x, y, z, w, label: point.label }; // Pass label through
+        }
+
+        function projectTo3D(point4D) {
+            const w_perspective = 1 / (PROJECTION_DISTANCE_W - point4D.w + 1e-6);
+            return {
+                x: point4D.x * w_perspective, y: point4D.y * w_perspective,
+                z: point4D.z * w_perspective, label: point4D.label // Pass label
+            };
+        }
+
+        function projectTo2D(point3D) {
+            const z_perspective = PROJECTION_DISTANCE_Z / (PROJECTION_DISTANCE_Z - point3D.z + 1e-6);
+            return {
+                x: point3D.x * z_perspective * currentBaseScale,
+                y: point3D.y * z_perspective * currentBaseScale,
+                depthFactor: z_perspective, label: point3D.label // Pass label
+            };
+        }
+
+        function draw() {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(canvas.width / 2 + offsetX, canvas.height / 2 + offsetY);
+            ctx.scale(zoomLevel, zoomLevel);
+
+            const projectedPoints2D = [];
+            if (!vertices4D || vertices4D.length === 0) { // Safety check
+                ctx.restore();
+                requestAnimationFrame(draw);
                 return;
             }
-            if (!pdfViewer) { // Initialize if not already
-                initializePdfViewer();
+
+            for (const vertex of vertices4D) {
+                const rotated = rotate4D(vertex, angleXY, angleZW, angleYW);
+                const projected3D = projectTo3D(rotated);
+                const projected2D = projectTo2D(projected3D);
+                projectedPoints2D.push(projected2D);
             }
 
-            try {
-                const arrayBuffer = await fileObject.arrayBuffer();
-                const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
-                currentPdfDocument = await loadingTask.promise;
-                pdfViewer.setDocument(currentPdfDocument);
-                pdfLinkService.setDocument(currentPdfDocument, null);
+            for (const edge of edges) {
+                const p1 = projectedPoints2D[edge[0]];
+                const p2 = projectedPoints2D[edge[1]];
+                if (!p1 || !p2) continue; // Skip if a point wasn't projected (e.g., if vertices4D changed mid-frame)
+
+                const avgDepthFactor = (p1.depthFactor + p2.depthFactor) / 2;
+                const brightness = Math.max(0.2, Math.min(1, avgDepthFactor * 0.8));
+                ctx.strokeStyle = `rgba(0, 255, 0, ${brightness})`;
+                ctx.lineWidth = Math.max(1, avgDepthFactor * 1.5) / zoomLevel;
                 
-                // Update page controls
-                pageNumInput.max = currentPdfDocument.numPages;
-                pageCountSpan.textContent = `/ ${currentPdfDocument.numPages}`;
-                pageNumInput.value = 1; // Start at page 1
-                pdfViewer.currentScaleValue = 'page-width'; // Default zoom
-
-            } catch (error) {
-                console.error(`Error loading PDF ${fileObject.name}:`, error);
-                alert(`Could not load PDF: ${fileObject.name}. It might be corrupted or protected. Error: ${error.message}`);
-                // If a PDF fails, what to do? Maybe remove it from list or try next?
-                // For now, just show error.
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.stroke();
             }
+
+            for (const p of projectedPoints2D) {
+                 if (!p) continue;
+                const scaledVertexSize = Math.max(2, p.depthFactor * 3) / zoomLevel;
+                const labelBrightness = Math.max(0.4, Math.min(1, p.depthFactor));
+                const scaledLabelFontSize = Math.max(8, Math.min(14, p.depthFactor * 10)) / zoomLevel;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, scaledVertexSize, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 255, 0, ${labelBrightness * 0.8})`;
+                ctx.fill();
+
+                ctx.fillStyle = `rgba(220, 255, 220, ${labelBrightness})`;
+                ctx.font = `${scaledLabelFontSize}px 'Courier New', Courier, monospace`;
+                ctx.textAlign = "left";
+                ctx.textBaseline = "middle";
+                ctx.fillText(p.label, p.x + scaledVertexSize + (5 / zoomLevel), p.y);
+            }
+            ctx.restore();
+
+            angleXY += xyRotationRate;
+            angleZW += zwRotationRate;
+            angleYW += ywRotationRate;
+            requestAnimationFrame(draw);
         }
 
-        // --- PDF Controls Event Listeners ---
-        zoomInBtn.addEventListener('click', () => {
-            if (pdfViewer) pdfViewer.currentScaleValue = (parseFloat(pdfViewer.currentScale) * 1.2).toString();
+        // --- Event Listeners for Pan and Zoom ---
+        canvas.addEventListener('mousedown', (event) => {
+            isDragging = true;
+            lastMouseX = event.clientX;
+            lastMouseY = event.clientY;
+            canvas.style.cursor = 'grabbing';
         });
-        zoomOutBtn.addEventListener('click', () => {
-             if (pdfViewer) pdfViewer.currentScaleValue = (parseFloat(pdfViewer.currentScale) / 1.2).toString();
-        });
-        prevPageBtn.addEventListener('click', () => {
-            if (pdfViewer && pdfViewer.currentPageNumber > 1) pdfViewer.currentPageNumber--;
-        });
-        nextPageBtn.addEventListener('click', () => {
-            if (pdfViewer && pdfViewer.currentPageNumber < pdfViewer.pagesCount) pdfViewer.currentPageNumber++;
-        });
-        pageNumInput.addEventListener('change', () => {
-            if (pdfViewer) {
-                let newPage = parseInt(pageNumInput.value);
-                if (newPage >= 1 && newPage <= pdfViewer.pagesCount) {
-                    pdfViewer.currentPageNumber = newPage;
-                } else {
-                    pageNumInput.value = pdfViewer.currentPageNumber; // Reset if invalid
-                }
+        window.addEventListener('mousemove', (event) => {
+            if (isDragging) {
+                const dx = event.clientX - lastMouseX;
+                const dy = event.clientY - lastMouseY;
+                offsetX += dx; offsetY += dy;
+                lastMouseX = event.clientX; lastMouseY = event.clientY;
             }
         });
-
-
-        // --- Session and Fullscreen Logic ---
-        startSessionBtn.addEventListener('click', startSession);
-
-        function startSession() {
-            if (selectedPdfFiles.length === 0) {
-                alert('Please select at least one PDF file.');
-                return;
-            }
-            currentPdfIndex = 0;
-            exitAttempts = 0; 
-            intentionallyExiting = false;
+        window.addEventListener('mouseup', () => {
+            if (isDragging) { isDragging = false; canvas.style.cursor = 'grab';}
+        });
+        canvas.addEventListener('wheel', (event) => {
+            event.preventDefault();
+            const zoomIntensity = 0.1;
+            const scrollDirection = event.deltaY < 0 ? 1 : -1;
+            const mouseX = event.offsetX; const mouseY = event.offsetY;
+            const worldMouseX = (mouseX - (canvas.width / 2 + offsetX)) / zoomLevel;
+            const worldMouseY = (mouseY - (canvas.height / 2 + offsetY)) / zoomLevel;
             
-            if (!pdfViewer) { // Initialize viewer on first session start
-                initializePdfViewer();
-            }
+            if (scrollDirection > 0) zoomLevel *= (1 + zoomIntensity);
+            else zoomLevel /= (1 + zoomIntensity);
+            zoomLevel = Math.max(0.1, Math.min(10, zoomLevel));
 
-            enterFS(); // Handles fullscreen request
-            loadPdf(selectedPdfFiles[currentPdfIndex]);
-            updatePdfIndicator();
-        }
+            offsetX = mouseX - (canvas.width / 2) - (worldMouseX * zoomLevel);
+            offsetY = mouseY - (canvas.height / 2) - (worldMouseY * zoomLevel);
+        }, { passive: false });
+
+        window.addEventListener('resize', () => {
+            canvasSize = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.55);
+            canvas.width = canvasSize; canvas.height = canvasSize;
+            currentBaseScale = canvasSize / 8;
+        });
         
-        function updatePdfIndicator() {
-            if (selectedPdfFiles.length > 0) {
-                pdfIndicator.textContent = `PDF ${currentPdfIndex + 1} / ${selectedPdfFiles.length} (${selectedPdfFiles[currentPdfIndex].name})`;
-            } else {
-                pdfIndicator.textContent = 'No PDFs loaded';
-            }
-            prevPdfBtn.disabled = selectedPdfFiles.length <= 1;
-            nextPdfBtn.disabled = selectedPdfFiles.length <= 1;
-        }
-
-        function enterFS() {
-            intentionallyExiting = false;
-            // exitAttempts = 0; // Reset attempts when intentionally entering
-            setupView.style.display = 'none';
-            fullscreenView.style.display = 'flex';
-            document.documentElement.requestFullscreen()
-                .then(() => {
-                    // Once fullscreen, ensure PDF viewer might need a resize/redraw
-                    if (pdfViewer) {
-                         pdfViewer.update(); // Force update layout
-                         pdfViewer.currentScaleValue = pdfViewer.currentScaleValue; // Re-apply scale
-                    }
-                })
-                .catch(err => {
-                    console.warn(`Fullscreen request failed: ${err.message}`);
-                    alert("Could not enter fullscreen. The focused session will continue in the normal window.");
-                });
-        }
-
-        function exitFS(intentional = true) {
-            intentionallyExiting = intentional;
-            if (document.fullscreenElement) {
-                document.exitFullscreen().catch(err => {
-                    console.warn(`Exit fullscreen failed: ${err.message}`);
-                });
-            }
-            // If not in fullscreen (e.g., Esc pressed or FS failed) or if intentional, clean up.
-            if (!document.fullscreenElement || intentional) {
-                 cleanupAndShowSetupView();
-            }
-        }
-        
-        function cleanupAndShowSetupView() {
-            fullscreenView.style.display = 'none';
-            setupView.style.display = 'block'; 
-            
-            // Don't destroy the PDF viewer instance entirely, just clear its document
-            // This way, it doesn't need full re-initialization every time
-            if (pdfViewer) {
-                pdfViewer.setDocument(null);
-                currentPdfDocument = null;
-            }
-            // Clear page number controls
-            pageNumInput.value = "";
-            pageCountSpan.textContent = "/ ?";
-
-            intentionallyExiting = false;
-            exitAttempts = 0; // Reset for next session
-        }
-
-        prevPdfBtn.addEventListener('click', () => {
-            if (selectedPdfFiles.length > 1) {
-                currentPdfIndex = (currentPdfIndex - 1 + selectedPdfFiles.length) % selectedPdfFiles.length;
-                loadPdf(selectedPdfFiles[currentPdfIndex]);
-                updatePdfIndicator();
-            }
-        });
-
-        nextPdfBtn.addEventListener('click', () => {
-            if (selectedPdfFiles.length > 1) {
-                currentPdfIndex = (currentPdfIndex + 1) % selectedPdfFiles.length;
-                loadPdf(selectedPdfFiles[currentPdfIndex]);
-                updatePdfIndicator();
-            }
-        });
-
-        document.addEventListener('fullscreenchange', () => {
-            if (!document.fullscreenElement && fullscreenView.style.display === 'flex' && !intentionallyExiting) {
-                exitAttempts++;
-                let message = "";
-                if (exitAttempts < MAX_EXIT_ATTEMPTS) {
-                    const attemptsLeft = MAX_EXIT_ATTEMPTS - exitAttempts;
-                    message = `Really want to leave focus? You have ${attemptsLeft} more chance(s) to reconsider. Press CANCEL to STAY FOCUSED.`;
-                } else {
-                    message = `LAST CHANCE! Are you absolutely sure you want to break your focus? Press OK to exit, or CANCEL to STAY.`;
-                }
-
-                // A brief delay before showing confirm might help avoid immediate re-FS clash
-                setTimeout(() => {
-                    if (confirm(message)) {
-                        cleanupAndShowSetupView(); // User confirmed exit
-                    } else {
-                        // User wants to stay, re-enter fullscreen
-                        // Reset attempts if they choose to stay this time
-                        // exitAttempts = 0; // Or maybe just decrement one? Let's reset for now for "fresh start"
-                        enterFS(); 
-                        // Re-load might be necessary if viewer state is lost on FS exit/re-entry
-                        if(selectedPdfFiles.length > 0 && selectedPdfFiles[currentPdfIndex]) {
-                            loadPdf(selectedPdfFiles[currentPdfIndex]);
-                        }
-                    }
-                }, 100); // 100ms delay
-
-            } else if (document.fullscreenElement) {
-                intentionallyExiting = false; 
-                // exitAttempts = 0; // Resetting here means any successful FS entry resets prompts
-                                  // This might be too lenient if user is FS-toggling rapidly.
-                                  // Let's keep exitAttempts counting unless a full session restart.
-                // Ensure viewer resizes correctly when entering fullscreen
-                if (pdfViewer) {
-                    pdfViewer.update();
-                    // pdfViewer.currentScaleValue = pdfViewer.currentScaleValue; // Re-apply scale to fit new viewport
-                }
-
-            } else if (!document.fullscreenElement && intentionallyExiting) {
-                // This means we called exitFS(true) and it completed.
-                cleanupAndShowSetupView();
-            }
-        });
-
+        // Initial load
+        loadShape('tesseract'); // Load default shape
+        currentBaseScale = canvasSize / 8; 
+        draw();
     </script>
 </body>
 </html>
